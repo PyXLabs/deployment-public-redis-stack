@@ -20,6 +20,8 @@ jobs:
           REDIS_PROD_PASSWORD: ${{ secrets.REDIS_PROD_PASSWORD }}
           NAME: PyXLabs
         run: |
+          echo "Current Files"
+          ls
           sed -i "s/<REDIS_STG_PASSWORD>/$(echo $REDIS_STG_PASSWORD | sed -e 's/[\/&]/\\&/g')/g" ./deployment-redis/.env.template
           sed -i "s/<REDIS_PROD_PASSWORD>/$(echo $REDIS_PROD_PASSWORD | sed -e 's/[\/&]/\\&/g')/g" ./deployment-redis/.env.template
           sed -i "s/<NAME>/$NAME/g" .env.template
