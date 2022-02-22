@@ -17,7 +17,7 @@ networks:
       - 6379
     ports:
       - 26379:6379 
-    command: redis-server --requirepass ${REDIS_STG_PASSWORD}
+    command: "redis-server --requirepass ${REDIS_STG_PASSWORD}"
     restart: unless-stopped
     environment:
       - TZ=Asia/Jakarta
@@ -33,7 +33,7 @@ networks:
       - 6379
     ports:
       - 172.17.0.1:16379:6379
-    command: redis-server --requirepass ${REDIS_PROD_PASSWORD}
+    command: "redis-server --requirepass ${REDIS_PROD_PASSWORD}"
     restart: unless-stopped
     environment:
       - TZ=Asia/Jakarta
