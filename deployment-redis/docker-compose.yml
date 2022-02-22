@@ -1,0 +1,39 @@
+version: '3.4'
+
+networks:
+  stg:
+    driver: bridge
+  prod:
+    driver: bridge
+
+  redis-stg:
+    image: redis:alpine
+    container_name: redis-stg
+    volumes:
+      - ./data/redis-stg:/data
+    networks:
+      - staging
+    expose:
+      - 6379
+    ports:
+      - 26379:6379 
+    command: redis-server --requirepass ${REDIS_STG_PASSWORD}
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Jakarta
+
+  redis-prod:
+    image: redis:alpine
+    container_name: redis-prod
+    volumes:
+      - ./data/redis-prod:/data
+    networks:
+      - prod
+    expose:
+      - 6379
+    ports:
+      - 172.17.0.1:16379:6379
+    command: redis-server --requirepass ${REDIS_PROD_PASSWORD}
+    restart: unless-stopped
+    environment:
+      - TZ=Asia/Jakarta

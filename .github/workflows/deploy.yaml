@@ -1,0 +1,43 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+    
+jobs:  
+  deploy:
+    name: Deploy to PyXLabs-Development Server
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2.3.4
+
+      - name: Build Credential from Github Secret
+        shell: bash
+        env:
+          REDIS_STG_PASSWORD: ${{ secrets.REDIS_STG_PASSWORD }}
+          REDIS_PROD_PASSWORD: ${{ secrets.REDIS_PROD_PASSWORD }}
+          NAME: PyXLabs
+        run: |
+          sed -i "s/<REDIS_STG_PASSWORD>/$(echo $REDIS_STG_PASSWORD | sed -e 's/[\/&]/\\&/g')/g" .env.template
+          sed -i "s/<REDIS_PROD_PASSWORD>/$(echo $REDIS_PROD_PASSWORD | sed -e 's/[\/&]/\\&/g')/g" .env.template
+          sed -i "s/<NAME>/$NAME/g" .env.template
+          mv .env.template .env
+
+      - name: Deployment to PyXMaid Runner
+        shell: bash
+        env: 
+          HOST: ${{ secrets.SERVER_HOST_PYXMAID }}
+          PORT: ${{ secrets.SERVER_PORT_PYXMAID }}
+          USERNAME: ${{ secrets.SERVER_USERNAME_PYXMAID }}
+          KEY: ${{ secrets.SSH_PRIVATE_KEY_PYXMAID }}
+        run: |
+          eval $(ssh-agent -s)
+          ssh-add <(echo "${{ secrets.SSH_PRIVATE_KEY_PYXMAID }}")
+          mkdir -p ~/.ssh
+          ssh-keyscan -p ${{ secrets.SERVER_PORT_PYXMAID }} -H ${{ secrets.SERVER_HOST_PYXMAID }} >> ~/.ssh/known_hosts
+          workingpath="deployment-redis"
+          cd $workingpath/
+          tar czf - * | ssh -p ${{ secrets.SERVER_PORT_PYXMAID }} ${{ secrets.SERVER_USERNAME_PYXMAID }}@${{ secrets.SERVER_HOST_PYXMAID }} "mkdir -p ~/$workingpath && cd ~/$workingpath && tar xzf -"
+          ssh -p ${{ secrets.SERVER_PORT_PYXMAID }} ${{ secrets.SERVER_USERNAME_PYXMAID }}@${{ secrets.SERVER_HOST_PYXMAID }} "cd ~/$workingpath && docker-compose up -d --remove-orphans"
