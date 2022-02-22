@@ -42,4 +42,4 @@ jobs:
           workingpath="deployment-redis"
           cd $workingpath/
           tar czf - . | ssh -p ${{ secrets.SERVER_PORT_PYXMAID }} ${{ secrets.SERVER_USERNAME_PYXMAID }}@${{ secrets.SERVER_HOST_PYXMAID }} "mkdir -p ~/$workingpath && cd ~/$workingpath && tar xzf -"
-          ssh -p ${{ secrets.SERVER_PORT_PYXMAID }} ${{ secrets.SERVER_USERNAME_PYXMAID }}@${{ secrets.SERVER_HOST_PYXMAID }} "cd ~/$workingpath && docker-compose up -d --remove-orphans"
+          ssh -p ${{ secrets.SERVER_PORT_PYXMAID }} ${{ secrets.SERVER_USERNAME_PYXMAID }}@${{ secrets.SERVER_HOST_PYXMAID }} "cd ~/$workingpath && docker-compose up -d --remove-orphans --env-file .env"
