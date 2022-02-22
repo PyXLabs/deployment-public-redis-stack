@@ -24,7 +24,7 @@ jobs:
           ls -liah ./deployment-redis/
           sed -i "s/<REDIS_STG_PASSWORD>/$(echo $REDIS_STG_PASSWORD | sed -e 's/[\/&]/\\&/g')/g" ./deployment-redis/.env.template
           sed -i "s/<REDIS_PROD_PASSWORD>/$(echo $REDIS_PROD_PASSWORD | sed -e 's/[\/&]/\\&/g')/g" ./deployment-redis/.env.template
-          sed -i "s/<NAME>/$NAME/g" .env.template
+          sed -i "s/<NAME>/$NAME/g" ./deployment-redis/.env.template
           mv ./deployment-redis/.env.template ./deployment-redis/.env
 
       - name: Deployment to PyXMaid Runner
