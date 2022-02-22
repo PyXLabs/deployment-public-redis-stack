@@ -6,6 +6,7 @@ networks:
   prod:
     driver: bridge
 
+services:
   redis-stg:
     image: redis:alpine
     container_name: redis-stg
