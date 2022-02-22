@@ -13,7 +13,7 @@ services:
     volumes:
       - ./data/redis-stg:/data
     networks:
-      - staging
+      - stg
     expose:
       - 6379
     ports:
